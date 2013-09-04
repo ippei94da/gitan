@@ -18,7 +18,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/ippei94da/gitan"
   gem.license = "MIT"
   gem.summary = %Q{private GIT mANager.}
-  gem.description = %Q{This gem provide some commands to manage multiple git repositories.}
+  gem.description = %Q{This gem provides some commands to manage multiple git repositories.}
   gem.email = "ippei94da@gmail.com"
   gem.authors = ["ippei94da"]
   # dependencies defined in Gemfile
