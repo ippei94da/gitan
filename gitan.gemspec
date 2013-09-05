@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "gitan"
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["ippei94da"]
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bin/gitanstatus",
+    "gitan.gemspec",
     "lib/gitan.rb",
     "lib/gitan/repo.rb",
     "test/gitan/test_repo.rb",
@@ -47,14 +48,12 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<test-unit>, [">= 2.5.5"])
-      s.add_development_dependency(%q<grit>, [">= 2.5.0"])
     else
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, ["~> 1.3.5"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
       s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<test-unit>, [">= 2.5.5"])
-      s.add_dependency(%q<grit>, [">= 2.5.0"])
     end
   else
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
@@ -62,7 +61,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
     s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<test-unit>, [">= 2.5.5"])
-    s.add_dependency(%q<grit>, [">= 2.5.0"])
   end
 end
 
