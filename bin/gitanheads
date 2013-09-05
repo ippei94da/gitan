@@ -1,0 +1,21 @@
+#! /usr/bin/env ruby
+
+#Show hash value of every git repository.
+
+require "gitan"
+require "yaml"
+
+if ARGV.empty?
+  git_dir = "/home/git"
+else
+  git_dir = File::expand_path(ARGV[0])
+end
+
+results = {}
+Dir.glob(git_dir + "/*").sort.map do |path|
+  next unless File.directory? path
+  repo = Gitan::Repo.new(path)
+  result[path] = repo.head
+end
+
+YAML.dump(results)
