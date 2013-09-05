@@ -1,0 +1,26 @@
+#! /usr/bin/env ruby
+
+require "gitan"
+
+if ARGV.empty?
+  git_dir = ENV["HOME"] + "/git"
+else
+  git_dir = File::expand_path(ARGV[0])
+end
+
+
+Gitan::Repo.show_abbreviation($stdout)
+
+repos = {}
+Dir.glob(git_dir + "/*").sort.map do |path|
+  next unless File.directory? path
+  repo = Gitan::Repo.new(path)
+  puts repo.short_status
+  #pp dirname
+  #begin
+  #  repos[File.basename file] = Gitan::Repo.new( Grit::Repo.new(file))
+  #rescue Grit::InvalidGitRepositoryError
+  #  next
+  #end
+
+end

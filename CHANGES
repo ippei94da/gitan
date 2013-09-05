@@ -1,7 +1,5 @@
-= THIS_GEM changelog
+= Gitan changelog
 
-== Master (for 0.0.0)
-
-####
 == Version 0.0.0
-
+* Add Gitan::Repo
+* Add bin/gitanstatus

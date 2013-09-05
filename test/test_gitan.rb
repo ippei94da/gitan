@@ -12,7 +12,7 @@ require "test/unit"
 
 class SampleTest < Test::Unit::TestCase
   def test_foo
-    assert_equal(1,1)
-    assert_equal(1,2)
+    #assert_equal(1,1)
+    #assert_equal(1,2)
   end
 end
