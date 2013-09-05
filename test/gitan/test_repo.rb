@@ -165,4 +165,10 @@ class TestRepo < Test::Unit::TestCase
     assert_equal("BS   r02", @r02.short_status)
   end
 
+  def test_head
+    assert_equal("b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
+                 @r00.head)
+    TODO
+  end
+
 end

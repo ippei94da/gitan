@@ -51,9 +51,12 @@ class Gitan::Repo
 
   #Return true if working tree has change which is commited but not pushed.
   def to_be_pushed?
-    head = command_output_lines("git rev-parse HEAD")[0]
     remote_lines = command_output_lines("git rev-parse --remotes")
     return (! remote_lines.include?(head))
+  end
+
+  def head
+    command_output_lines("git rev-parse HEAD")[0]
   end
 
   private
