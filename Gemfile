@@ -12,5 +12,5 @@ group :development do
   #gem "rcov", ">= 0"
   gem "simplecov", ">= 0"
   gem "test-unit", ">= 2.5.5"
-  gem "grit", ">= 2.5.0"
+  #gem "grit", ">= 2.5.0"
 end
