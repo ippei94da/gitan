@@ -15,7 +15,9 @@ results = {}
 Dir.glob(git_dir + "/*").sort.map do |path|
   next unless File.directory? path
   repo = Gitan::Repo.new(path)
-  result[path] = repo.head
+  results[path] = repo.head
 end
 
-YAML.dump(results)
+#pp results
+
+YAML.dump(results, $stdout)

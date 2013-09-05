@@ -51,7 +51,7 @@ class TestRepo < Test::Unit::TestCase
         "d37ebd5948c87c142cf52572c44f032896879ec9",
       ],
     }
-    @r00 = Gitan::Repo.new("r00")
+    @r00 = Gitan::Repo.new("/home/git/r00")
     @r00.set_outputs(outputs)
 
     outputs = {
@@ -67,7 +67,7 @@ class TestRepo < Test::Unit::TestCase
         "d37ebd5948c87c142cf52572c44f032896879ec9",
       ],
     }
-    @r01 = Gitan::Repo.new("r01")
+    @r01 = Gitan::Repo.new("/home/git/r01")
     @r01.set_outputs(outputs)
 
     outputs = {
@@ -81,7 +81,7 @@ class TestRepo < Test::Unit::TestCase
         "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
       ],
     }
-    @r02 = Gitan::Repo.new("r02")
+    @r02 = Gitan::Repo.new("/home/git/r02")
     @r02.set_outputs(outputs)
 
     outputs = {
@@ -92,9 +92,28 @@ class TestRepo < Test::Unit::TestCase
         "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
       ],
     }
-    @r03 = Gitan::Repo.new("r00")
+    @r03 = Gitan::Repo.new("/home/git/r00")
     @r03.set_outputs(outputs)
 
+    outputs = {
+      "git branch" => ["* master"],
+      "git status -s" => [],
+      "git rev-parse HEAD" => ["b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4"],
+      "git rev-parse --remotes" => [
+        "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
+        "d37ebd5948c87c142cf52572c44f032896879ec9",
+      ],
+      'git log --pretty=format:"%H"' => [
+        '426d64110ba70823d26f9952068f3d9af3184da9',
+        '6947447f5f043aba7144ea126ed9f6a5f31b0a34',
+        '4dca77b8d4726d61b2c2c37d3496a2a78ed02009',
+      ]
+    }
+    @r04 = Gitan::Repo.new("/home/git/r04","b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4")
+    @r04.set_outputs(outputs)
+
+    @r05 = Gitan::Repo.new("/home/git/r05","426d64110ba70823d26f9952068f3d9af3184da9")
+    @r05.set_outputs(outputs)
   end
 
   def test_to_be_staged?
@@ -160,14 +179,22 @@ class TestRepo < Test::Unit::TestCase
   end
 
   def test_short_status
-    assert_equal("     r00", @r00.short_status)
-    assert_equal("BSCP r01", @r01.short_status)
-    assert_equal("BS   r02", @r02.short_status)
+    assert_equal("      r00", @r00.short_status)
+    assert_equal(" BSCP r01", @r01.short_status)
+    assert_equal(" BS   r02", @r02.short_status)
+    assert_equal("L     r04", @r04.short_status)
+    assert_equal("      r05", @r05.short_status)
   end
 
   def test_head
     assert_equal("b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
                  @r00.head)
   end
+
+  def test_to_be_pulled?
+    assert_equal(true , @r04.to_be_pulled?)
+    assert_equal(false, @r05.to_be_pulled?)
+  end
+
 
 end

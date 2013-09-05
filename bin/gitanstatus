@@ -3,16 +3,25 @@
 
 #Show status of every git working trees.
 #
-require "gitan"
 require "optparse"
+require "yaml"
+require "gitan"
 
 ## option analysis
 OPTIONS = {}
 op = OptionParser.new
-op.on("-l",
-      "--files-with-change",
-      "Show only working trees with changes"){
-  OPTIONS[:files_with_change] = true
+#op.on("-l",
+#      "--files-with-change",
+#      "Show only working trees with changes"){
+#  OPTIONS[:files_with_change] = true
+#}
+op.on("-r repo", "--with-remote=repo", "With remote info."){ |repo|
+  #E.g., repo=yggdrasil.myhome.cx:/home/git
+  server, path = repo.split(":")
+  OPTIONS[:with_remote] = {
+    :server => server,
+    :path => path
+  }
 }
 op.parse!(ARGV)
 
@@ -23,9 +32,20 @@ else
   git_dir = File::expand_path(ARGV[0])
 end
 
+if OPTIONS[:with_remote]
+  heads = {}
+  YAML.load(`ssh #{OPTIONS[:with_remote][:server]} gitanheads #{OPTIONS[:with_remote][:path]}`).each do |path, head|
+    repo_name = File.basename(path).sub(/\.git$/, "")
+    heads[repo_name] = head
+  end
+  OPTIONS[:with_remote] = heads
+end
+
+#pp OPTIONS[:with_remote];exit
+
 Gitan::Repo.show_abbreviation($stdout)
 Dir.glob(git_dir + "/*").sort.map do |path|
   next unless File.directory? path
-  repo = Gitan::Repo.new(path)
+  repo = Gitan::Repo.new(path, OPTIONS[:with_remote][File.basename(path)])
   puts repo.short_status
 end
