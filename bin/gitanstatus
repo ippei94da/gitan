@@ -46,6 +46,7 @@ end
 Gitan::Repo.show_abbreviation($stdout)
 Dir.glob(git_dir + "/*").sort.map do |path|
   next unless File.directory? path
-  repo = Gitan::Repo.new(path, OPTIONS[:with_remote][File.basename(path)])
+  head = OPTIONS[:with_remote][File.basename(path)] if OPTIONS[:with_remote]
+  repo = Gitan::Repo.new(path, head)
   puts repo.short_status
 end
