@@ -2,7 +2,9 @@
 # coding: utf-8
 
 #Show status of every git working trees.
-#
+#Confirm the command 'git rev-parse FETCH_HEAD' show a hash value.
+#If not, you should execute 'git pull'
+
 require "optparse"
 require "yaml"
 require "gitan"
