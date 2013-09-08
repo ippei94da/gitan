@@ -1,6 +1,10 @@
 #! /usr/bin/env ruby
+# coding: utf-8
 
 #Show hash value of every git repository.
+#Examples:
+# gitanheads
+# gitanheads /home/git
 
 require "gitan"
 require "yaml"
@@ -17,7 +21,5 @@ Dir.glob(git_dir + "/*").sort.map do |path|
   repo = Gitan::Repo.new(path)
   results[path] = repo.head
 end
-
-#pp results
 
 YAML.dump(results, $stdout)

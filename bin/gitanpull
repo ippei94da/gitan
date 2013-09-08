@@ -1,32 +1,32 @@
 #! /usr/bin/env ruby
 # coding: utf-8
 
-#Show status of every git working trees.
-#
+#Pull every working tree that has update on remote.
+#Example: gitanpull ygg --repository=example.com:/home/git
+
 require "optparse"
-require "yaml"
 require "gitan"
 
-## option analysis
 OPTIONS = {}
 op = OptionParser.new
-op.on("-r repo", "--with-remote=repo", "With remote info."){ |repo|
-  #E.g., repo=yggdrasil.myhome.cx:/home/git
+op.on("-r repo", "--repository=repo", "Indicate repository."){ |repo|
   server, path = repo.split(":")
   OPTIONS[:with_remote] = Gitan.remote_heads(server, path)
 }
 op.parse!(ARGV)
 
-if ARGV.empty?
-  git_dir = ENV["HOME"] + "/git"
-else
-  git_dir = File::expand_path(ARGV[0])
-end
+git_dir = ENV["HOME"] + "/git"
+remote = ARGV[0]
 
-Gitan::Repo.show_abbreviation($stdout)
 Dir.glob(git_dir + "/*").sort.map do |path|
   next unless File.directory? path
   head = OPTIONS[:with_remote][File.basename(path)] if OPTIONS[:with_remote]
   repo = Gitan::Repo.new(path, head)
-  puts repo.short_status
+  if repo.to_be_pulled?
+    print "#{path}: "
+    Dir.chdir path
+    puts "git pull #{remote} master"
+    system "git pull #{remote} master"
+  end
 end
+
