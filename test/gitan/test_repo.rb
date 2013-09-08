@@ -45,10 +45,11 @@ class TestRepo < Test::Unit::TestCase
     outputs = {
       "git branch" => ["* master"],
       "git status -s" => [],
-      "git rev-parse HEAD" => ["b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4"],
+      "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse --remotes" => [
-        "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
-        "d37ebd5948c87c142cf52572c44f032896879ec9",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       ],
     }
     @r00 = Gitan::Repo.new("/home/git/r00")
@@ -61,10 +62,11 @@ class TestRepo < Test::Unit::TestCase
         "AM bin/gitanstatus",
         "?? test/gitan/",
       ],
-      "git rev-parse HEAD" => ["b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4"],
+      "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "git rev-parse FETCH_HEAD" => ["dddddddddddddddddddddddddddddddddddddddd"],
       "git rev-parse --remotes" => [
-        "6671b434a3ed6414cab0c676a90c575bbb03d9da",
-        "d37ebd5948c87c142cf52572c44f032896879ec9",
+        "cccccccccccccccccccccccccccccccccccccccc",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       ],
     }
     @r01 = Gitan::Repo.new("/home/git/r01")
@@ -75,10 +77,11 @@ class TestRepo < Test::Unit::TestCase
       "git status -s" => [
         "?? test/gitan/",
       ],
-      "git rev-parse HEAD" => ["b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4"],
+      "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse --remotes" => [
-        "6671b434a3ed6414cab0c676a90c575bbb03d9da",
-        "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
+        "cccccccccccccccccccccccccccccccccccccccc",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       ],
     }
     @r02 = Gitan::Repo.new("/home/git/r02")
@@ -87,9 +90,10 @@ class TestRepo < Test::Unit::TestCase
     outputs = {
       "git branch" => ["* master"],
       "git status -s" => [],
-      "git rev-parse HEAD" => ["b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4"],
+      "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse --remotes" => [
-        "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       ],
     }
     @r03 = Gitan::Repo.new("/home/git/r00")
@@ -98,22 +102,41 @@ class TestRepo < Test::Unit::TestCase
     outputs = {
       "git branch" => ["* master"],
       "git status -s" => [],
-      "git rev-parse HEAD" => ["b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4"],
+      "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse --remotes" => [
-        "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
-        "d37ebd5948c87c142cf52572c44f032896879ec9",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       ],
       'git log --pretty=format:"%H"' => [
-        '426d64110ba70823d26f9952068f3d9af3184da9',
-        '6947447f5f043aba7144ea126ed9f6a5f31b0a34',
-        '4dca77b8d4726d61b2c2c37d3496a2a78ed02009',
+        'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+        'ffffffffffffffffffffffffffffffffffffffff',
+        '0000000000000000000000000000000000000000',
       ]
     }
-    @r04 = Gitan::Repo.new("/home/git/r04","b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4")
+    @r04 = Gitan::Repo.new("/home/git/r04","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     @r04.set_outputs(outputs)
 
-    @r05 = Gitan::Repo.new("/home/git/r05","426d64110ba70823d26f9952068f3d9af3184da9")
+    @r05 = Gitan::Repo.new("/home/git/r05","eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
     @r05.set_outputs(outputs)
+
+    outputs = {
+      "git branch" => ["* master", "  tmp"],
+      "git status -s" => [
+        " M Gemfile",
+        "AM bin/gitanstatus",
+        "?? test/gitan/",
+      ],
+      "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+      "git rev-parse --remotes" => [
+        "cccccccccccccccccccccccccccccccccccccccc",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      ],
+    }
+    @r06 = Gitan::Repo.new("/home/git/r01")
+    @r06.set_outputs(outputs)
+
   end
 
   def test_to_be_staged?
@@ -151,16 +174,16 @@ class TestRepo < Test::Unit::TestCase
   def test_command_output_lines
     assert_equal(
       [
-        "b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
-        "d37ebd5948c87c142cf52572c44f032896879ec9",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       ],
       @r00.command_output_lines("git rev-parse --remotes")
     )
 
     assert_equal(
       [
-        "6671b434a3ed6414cab0c676a90c575bbb03d9da",
-        "d37ebd5948c87c142cf52572c44f032896879ec9",
+        "cccccccccccccccccccccccccccccccccccccccc",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       ],
       @r01.command_output_lines("git rev-parse --remotes")
     )
@@ -170,6 +193,7 @@ class TestRepo < Test::Unit::TestCase
     assert_equal(false, @r00.to_be_pushed?)
     assert_equal(true , @r01.to_be_pushed?)
     assert_equal(false , @r03.to_be_pushed?)
+    assert_equal(false , @r06.to_be_pushed?)
   end
 
   def test_multiple_branch?
@@ -187,7 +211,7 @@ class TestRepo < Test::Unit::TestCase
   end
 
   def test_head
-    assert_equal("b4a9cab36b51cc8ca9b9a67d4b7c82abf6f02df4",
+    assert_equal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                  @r00.head)
   end
 

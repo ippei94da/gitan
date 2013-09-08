@@ -55,8 +55,15 @@ class Gitan::Repo
 
   #Return true if working tree has change which is commited but not pushed.
   def to_be_pushed?
+    result = true
+
     remote_lines = command_output_lines("git rev-parse --remotes")
-    return (! remote_lines.include?(head))
+    result = false if remote_lines.include?(head)
+
+    fetch_head = command_output_lines("git rev-parse FETCH_HEAD")[0]
+    result = false if head == fetch_head
+
+    return result
   end
 
   def head
@@ -66,17 +73,10 @@ class Gitan::Repo
   #Return true if the working tree has un-pulled changes on remote.
   def to_be_pulled?
     lines = command_output_lines('git log --pretty=format:"%H"')
-    #pp lines
-    #pp @remote_head
-    #exit
     return ! lines.include?(@remote_head)
   end
 
   private
-
-  #def short_status_lines
-  #  `git status -s`.split("\n")
-  #end
 
   def command_output_lines(str)
     Dir.chdir @path

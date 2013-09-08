@@ -9,10 +9,12 @@ require 'helper'
 #
 gem "test-unit"
 require "test/unit"
+require "gitan"
+require "pp"
 
-class SampleTest < Test::Unit::TestCase
-  def test_foo
-    #assert_equal(1,1)
-    #assert_equal(1,2)
+class TestGitan < Test::Unit::TestCase
+  def test_remote_heads
+    ##How should be tested?
+    #pp Gitan.remote_heads("localhost", "/home/git")
   end
 end

@@ -18,13 +18,9 @@ op = OptionParser.new
 op.on("-r repo", "--with-remote=repo", "With remote info."){ |repo|
   #E.g., repo=yggdrasil.myhome.cx:/home/git
   server, path = repo.split(":")
-  OPTIONS[:with_remote] = {
-    :server => server,
-    :path => path
-  }
+  OPTIONS[:with_remote] = Gitan.remote_heads(server, path)
 }
 op.parse!(ARGV)
-
 
 if ARGV.empty?
   git_dir = ENV["HOME"] + "/git"
@@ -32,21 +28,11 @@ else
   git_dir = File::expand_path(ARGV[0])
 end
 
-if OPTIONS[:with_remote]
-  heads = {}
-  YAML.load(`ssh #{OPTIONS[:with_remote][:server]} gitanheads #{OPTIONS[:with_remote][:path]}`).each do |path, head|
-    repo_name = File.basename(path).sub(/\.git$/, "")
-    heads[repo_name] = head
-  end
-  OPTIONS[:with_remote] = heads
-end
-
-#pp OPTIONS[:with_remote];exit
-
 Gitan::Repo.show_abbreviation($stdout)
 Dir.glob(git_dir + "/*").sort.map do |path|
   next unless File.directory? path
   head = OPTIONS[:with_remote][File.basename(path)] if OPTIONS[:with_remote]
   repo = Gitan::Repo.new(path, head)
+  #pp repo
   puts repo.short_status
 end
