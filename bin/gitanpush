@@ -1,23 +1,20 @@
-#! /usr/bin/env ruby
-# coding: utf-8
-
-#Commit every working tree that has changes to be pushed.
-#Example: gitanpush /home/ippei/git origin master
-
-require "optparse"
-require "gitan"
-
-git_dir = ARGV.shift
-
-Dir.glob(git_dir + "/*").sort.map do |path|
-  next unless File.directory? path
-  repo = Gitan::Repo.new(path, nil)
-  if repo.to_be_pushed?
-    print "#{path}: "
-    Dir.chdir path
-    command = "git push #{ARGV.join(" ")}"
-    puts command
-    system command
-  end
-end
-
+##! /usr/bin/env ruby
+## coding: utf-8
+#
+#require "optparse"
+#require "gitan"
+#
+#git_dir = ARGV.shift
+#
+#Dir.glob(git_dir + "/*").sort.map do |path|
+#  next unless File.directory? path
+#  repo = Gitan::Repo.new(path, nil)
+#  if repo.to_be_pushed?
+#    print "#{path}: "
+#    Dir.chdir path
+#    command = "git push #{ARGV.join(" ")}"
+#    puts command
+#    system command
+#  end
+#end
+#

@@ -1,23 +1,23 @@
-#! /usr/bin/env ruby
-# coding: utf-8
-
-#Commit every working tree that has changes to be be commited.
-#Example: gitancommit ~/git -am "message"
-
-require "optparse"
-require "gitan"
-
-git_dir = ARGV.shift
-
-Dir.glob(git_dir + "/*").sort.map do |path|
-  next unless File.directory? path
-  repo = Gitan::Repo.new(path, nil)
-  if repo.to_be_commited?
-    print "#{path}: "
-    Dir.chdir path
-    command = "git commit \"#{ARGV.join(" ")}\""
-    puts command
-    system command
-  end
-end
-
+##! /usr/bin/env ruby
+## coding: utf-8
+#
+##Commit every working tree that has changes to be be commited.
+##Example: gitancommit ~/git -am "message"
+#
+#require "optparse"
+#require "gitan"
+#
+#git_dir = ARGV.shift
+#
+#Dir.glob(git_dir + "/*").sort.map do |path|
+#  next unless File.directory? path
+#  repo = Gitan::Repo.new(path, nil)
+#  if repo.to_be_commited?
+#    print "#{path}: "
+#    Dir.chdir path
+#    command = "git commit \"#{ARGV.join(" ")}\""
+#    puts command
+#    system command
+#  end
+#end
+#

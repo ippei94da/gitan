@@ -8,6 +8,12 @@
 #
 #gitan heads
 # Show hash value of every git repository.
+#
+#gitan commit
+# Commit every working tree that has changes to be be commited.
+#
+#gitan push
+# Commit every working tree that has changes to be pushed.
 
 require "optparse"
 require "yaml"
@@ -26,9 +32,12 @@ USAGE
   Default value of 'path' is ~/git.
 
   Examples:
+    gitan heads /home/git
+    gitan status -r example.com:/home/git
     gitan pull ~/git -r example.com:/home/git -a "origin master"
-    gitan commit --argument='-am "daily change"'
-
+    gitan commit --argument='-am "commit message"'
+    TODO
+    #gitan push /home/ippei/git origin master
   HERE
 end
 
@@ -44,6 +53,8 @@ def add_argument_option
     OPTIONS[:argument] = str
   }
 end
+
+
 
 def status
   add_remote_option
@@ -90,12 +101,34 @@ def commit
       Dir.chdir path
       command = "git commit #{OPTIONS[:argument]}"
       puts command
-      #puts "system " + command unless OPTIONS[:debug]
       system command unless OPTIONS[:debug]
     end
   end
 end
 
+def push
+  add_argument_option
+  OPTION_PARSER.parse!(ARGV)
+
+  git_dir = ENV["HOME"] + "/git"
+  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
+
+  Dir.glob(git_dir + "/*").sort.map do |path|
+    next unless File.directory? path
+    repo = Gitan::Repo.new(path, nil)
+    if repo.to_be_pushed?
+      print "#{path}: "
+      Dir.chdir path
+      command = "git push #{OPTIONS[:argument]}"
+      puts command
+      system command unless OPTIONS[:debug]
+    end
+  end
+end
+
+def pull
+  TODO
+end
 
 ##main
 OPTIONS = {}
@@ -110,6 +143,10 @@ when "heads"
   heads
 when "commit"
   commit
+when "push"
+  push
+when "pull"
+  pull
 when "--help"
   show_usage
 else
