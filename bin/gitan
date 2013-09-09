@@ -1,0 +1,65 @@
+#! /usr/bin/env ruby
+# coding: utf-8
+
+require "optparse"
+require "pp"
+require "gitan"
+
+## option analysis
+OPTIONS = {}
+#OPTIONS = {}
+#op = OptionParser.new
+#op.on("-a", "--all", "execute all working tree"){
+#  OPTIONS[:all] = true
+#}
+#op.on("-o str", "--argument=str", "descriptionB"){|v| OPTIONS[:bak] = v}
+#op.parse!(ARGV)
+
+def show_usage
+  puts <<-HERE
+USAGE
+  gitan heads [path]"
+  gitan status [path] [-r remote_repo]"
+  gitan commit [path] [-a arguments]"
+  gitan pull [path] [-a arguments] [-r remote_repo]"
+  gitan push [path] [-a arguments]"
+  E.g.,
+  gitan pull ~/git -r example.com:/home/git -a "origin master"
+  default value of 'path' is ~/git.
+  HERE
+end
+
+def status
+  op = OptionParser.new
+  op.on("-r repo", "--remote=repo", "With remote info."){ |repo|
+    server, path = repo.split(":")
+    OPTIONS[:remote] = Gitan.remote_heads(server, path)
+  }
+  op.parse!(ARGV)
+
+  if ARGV.empty?
+    git_dir = ENV["HOME"] + "/git"
+  else
+    git_dir = File::expand_path(ARGV[0])
+  end
+
+  Gitan::Repo.show_abbreviation($stdout)
+  Dir.glob(git_dir + "/*").sort.map do |path|
+    next unless File.directory? path
+    head = OPTIONS[:remote][File.basename(path)] if OPTIONS[:remote]
+    repo = Gitan::Repo.new(path, head)
+    puts repo.short_status
+  end
+end
+
+command = ARGV.shift
+
+case command
+when "status"
+  status
+when "--help"
+  show_usage
+else
+  puts "Unknown command: #{command}"
+  show_usage
+end
