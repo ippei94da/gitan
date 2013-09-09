@@ -1,5 +1,6 @@
 #
 class Gitan::Repo
+  attr_reader :path
 
   def self.show_abbreviation(io = $stdout)
     io.puts "==== B: multiple branches, S: to be staged, C: to be commited, P: to be pushed, L: to be pulled."

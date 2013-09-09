@@ -26,21 +26,20 @@ require "gitan"
 def show_usage
   puts <<-HERE
 USAGE
-  gitan heads [path]"
+  gitan heads  [path]"
   gitan status [path] [-r remote_repo]"
   gitan commit [path] [-a arguments]"
-  gitan pull [path] [-a arguments] [-r remote_repo]"
-  gitan push [path] [-a arguments]"
+  gitan push   [path] [-a arguments]"
+  gitan pull   [path] [-a arguments] [-r remote_repo]"
 
   Default value of 'path' is ~/git.
 
   Examples:
     gitan heads /home/git
     gitan status -r example.com:/home/git
-    gitan pull ~/git -r example.com:/home/git -a "origin master"
     gitan commit --argument='-am "commit message"'
-    TODO
-    #gitan push /home/ippei/git origin master
+    gitan push -a "origin master"
+    gitan pull ~/git -r example.com:/home/git -a "origin master"
   HERE
 end
 
@@ -57,6 +56,26 @@ def add_argument_option
   }
 end
 
+def repositories
+  git_dir = ENV["HOME"] + "/git"
+  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
+
+  dirs = Dir.glob(git_dir + "/*").sort.map do |path|
+    if File.directory? path
+      Gitan::Repo.new(path, nil)
+    else
+      nil
+    end
+  end
+  dirs.select{|dir| dir}
+end
+
+def execute(path, command)
+  print "#{path}: "
+  Dir.chdir path
+  puts command
+  system command unless OPTIONS[:debug]
+end
 
 
 def status
@@ -93,20 +112,23 @@ def commit
   add_argument_option
   OPTION_PARSER.parse!(ARGV)
 
-  git_dir = ENV["HOME"] + "/git"
-  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
-
-  Dir.glob(git_dir + "/*").sort.map do |path|
-    next unless File.directory? path
-    repo = Gitan::Repo.new(path, nil)
-    if repo.to_be_commited?
-      print "#{path}: "
-      Dir.chdir path
-      command = "git commit #{OPTIONS[:argument]}"
-      puts command
-      system command unless OPTIONS[:debug]
-    end
+  repositories.select {|repo| repo.to_be_commited?}.each do |repo|
+    execute(repo.path, "git commit #{OPTIONS[:argument]}")
   end
+  #git_dir = ENV["HOME"] + "/git"
+  #git_dir = File::expand_path(ARGV[0]) if ARGV[0]
+
+  #Dir.glob(git_dir + "/*").sort.map do |path|
+  #  next unless File.directory? path
+  #  repo = Gitan::Repo.new(path, nil)
+  #  if repo.to_be_commited?
+  #    print "#{path}: "
+  #    Dir.chdir path
+  #    command = "git commit #{OPTIONS[:argument]}"
+  #    puts command
+  #    system command unless OPTIONS[:debug]
+  #  end
+  #end
 end
 
 def push
