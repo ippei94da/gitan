@@ -9,6 +9,7 @@
 * add gitan subcommand, gitan push
 * add gitan subcommand, gitan pull
 * add --remote option to 'gitan status'
+* add --all and --explain options to gitan status
 
 == Version 0.0.1
 * small bugfix for executable bin/gitanstatus
