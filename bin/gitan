@@ -6,7 +6,8 @@
 #
 #gitan status
 # Show status of every git working trees.
-# Confirm the command 'git rev-parse FETCH_HEAD' show a hash value.
+# You should confirm the command 'git rev-parse FETCH_HEAD'
+# shows a hash value.
 # If not, you should execute 'git pull'
 #
 #gitan commit
@@ -16,7 +17,7 @@
 # Commit every working tree that has changes to be pushed.
 #
 #gitan pull
-# Pull every working tree that has update on remote.
+# Pull every working tree that has updates on remote repository.
 
 require "optparse"
 require "yaml"
@@ -59,7 +60,6 @@ end
 def repositories(remote_heads = {})
   git_dir = ENV["HOME"] + "/git"
   git_dir = File::expand_path(ARGV[0]) if ARGV[0]
-
 
   dirs = Dir.glob(git_dir + "/*").sort.map do |path|
     if File.directory? path

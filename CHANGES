@@ -1,18 +1,19 @@
 = Gitan changelog
 
 == Master for 0.0.2
-* Bugfix of to_be_pushed; to be false just after git pull.
+* bugfix of Gitan::Repo#to_be_pushed; to be false just after git pull.
+* bugfix of Gitan::REpo#to_be_staged.
 * add bin/gitan
-* add gitan subcommand, gitan status, alternatively to bin/gitanstatus
-* add gitan subcommand, gitan heads
-* add gitan subcommand, gitan commit
-* add gitan subcommand, gitan push
-* add gitan subcommand, gitan pull
+* add gitan subcommand, 'gitan status', alternatively to bin/gitanstatus
+* add gitan subcommand, 'gitan heads'
+* add gitan subcommand, 'gitan commit'
+* add gitan subcommand, 'gitan push'
+* add gitan subcommand, 'gitan pull'
 * add --remote option to 'gitan status'
-* add --all and --explain options to gitan status
+* add --all and --explain options to 'gitan status'
 
 == Version 0.0.1
-* small bugfix for executable bin/gitanstatus
+* bugfix for executable bin/gitanstatus
 
 == Version 0.0.0
 * add Gitan::Repo
