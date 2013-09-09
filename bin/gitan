@@ -27,10 +27,10 @@ def show_usage
   puts <<-HERE
 USAGE
   gitan heads  [path]"
-  gitan status [path] [-r remote_repo]"
+  gitan status [path] [-r remote_dir]"
   gitan commit [path] [-a arguments]"
   gitan push   [path] [-a arguments]"
-  gitan pull   [path] [-a arguments] [-r remote_repo]"
+  gitan pull   [path] [-a arguments] [-r remote_dir]"
 
   Default value of 'path' is ~/git.
 
@@ -44,8 +44,8 @@ USAGE
 end
 
 def add_remote_option
-  OPTION_PARSER.on("-r repo", "--remote=repo", "with remote info"){ |repo|
-    server, path = repo.split(":")
+  OPTION_PARSER.on("-r remote_dir", "--remote=dir", "with remote info"){ |remote_dir|
+    server, path = remote_dir.split(":")
     OPTIONS[:remote] = Gitan.remote_heads(server, path)
   }
 end
@@ -56,13 +56,16 @@ def add_argument_option
   }
 end
 
-def repositories
+def repositories(remote_heads = {})
   git_dir = ENV["HOME"] + "/git"
   git_dir = File::expand_path(ARGV[0]) if ARGV[0]
 
+
   dirs = Dir.glob(git_dir + "/*").sort.map do |path|
     if File.directory? path
-      Gitan::Repo.new(path, nil)
+      remote_head = nil
+      remote_head = OPTIONS[:remote][File.basename(path)] if OPTIONS[:remote]
+      Gitan::Repo.new(path, remote_head)
     else
       nil
     end
@@ -77,77 +80,53 @@ def execute(path, command)
   system command unless OPTIONS[:debug]
 end
 
-
 def status
   add_remote_option
+  OPTION_PARSER.on("-a", "--all", "show all repositories."){ OPTIONS[:all] = true}
+  OPTION_PARSER.on("-e", "--explain", "show explanation for abbreviation."){ OPTIONS[:explain] = true}
   OPTION_PARSER.parse!(ARGV)
 
-  git_dir = ENV["HOME"] + "/git"
-  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
+  repos = repositories
+  unless OPTIONS[:all]
+    repos = repos.select do |repo|
+      result = false
+      result = true if repo.multiple_branch?
+      result = true if repo.to_be_staged?
+      result = true if repo.to_be_commited?
+      result = true if repo.to_be_pushed?
+      result = true if (OPTIONS[:remote] && repo.to_be_pulled?)
+      result
+    end
+  end
 
-  Gitan::Repo.show_abbreviation($stdout)
-  Dir.glob(git_dir + "/*").sort.map do |path|
-    next unless File.directory? path
-    head = OPTIONS[:remote][File.basename(path)] if OPTIONS[:remote]
-    repo = Gitan::Repo.new(path, head)
+  Gitan::Repo.show_abbreviation if OPTIONS[:explain]
+  repos.each do |repo|
     puts repo.short_status
   end
 end
 
 def heads
-  git_dir = ENV["HOME"] + "/git"
-  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
-
   results = {}
-  Dir.glob(git_dir + "/*").sort.map do |path|
-    next unless File.directory? path
-    repo = Gitan::Repo.new(path)
-    results[path] = repo.head
+  repositories.each do |repo|
+    results[repo.path] = repo.head
   end
-
   YAML.dump(results, $stdout)
 end
 
 def commit
   add_argument_option
   OPTION_PARSER.parse!(ARGV)
-
   repositories.select {|repo| repo.to_be_commited?}.each do |repo|
     execute(repo.path, "git commit #{OPTIONS[:argument]}")
   end
-  #git_dir = ENV["HOME"] + "/git"
-  #git_dir = File::expand_path(ARGV[0]) if ARGV[0]
-
-  #Dir.glob(git_dir + "/*").sort.map do |path|
-  #  next unless File.directory? path
-  #  repo = Gitan::Repo.new(path, nil)
-  #  if repo.to_be_commited?
-  #    print "#{path}: "
-  #    Dir.chdir path
-  #    command = "git commit #{OPTIONS[:argument]}"
-  #    puts command
-  #    system command unless OPTIONS[:debug]
-  #  end
-  #end
 end
 
 def push
   add_argument_option
   OPTION_PARSER.parse!(ARGV)
 
-  git_dir = ENV["HOME"] + "/git"
-  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
-
-  Dir.glob(git_dir + "/*").sort.map do |path|
-    next unless File.directory? path
-    repo = Gitan::Repo.new(path, nil)
-    if repo.to_be_pushed?
-      print "#{path}: "
-      Dir.chdir path
-      command = "git push #{OPTIONS[:argument]}"
-      puts command
-      system command unless OPTIONS[:debug]
-    end
+  repositories.select {|repo| repo.to_be_pushed?}.each do |repo|
+    execute(repo.path, "git push #{OPTIONS[:argument]}")
   end
 end
 
@@ -155,20 +134,9 @@ def pull
   add_remote_option
   add_argument_option
   OPTION_PARSER.parse!(ARGV)
-  git_dir = ENV["HOME"] + "/git"
-  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
 
-  Dir.glob(git_dir + "/*").sort.map do |path|
-    next unless File.directory? path
-    head = OPTIONS[:remote][File.basename(path)] if OPTIONS[:remote]
-    repo = Gitan::Repo.new(path, head)
-    if repo.to_be_pulled?
-      print "#{path}: "
-      Dir.chdir path
-      command = "git pull #{OPTIONS[:argument]}"
-      puts command
-      system command unless OPTIONS[:debug]
-    end
+  repositories.select {|repo| repo.to_be_pulled?}.each do |repo|
+    execute(repo.path, "git pull #{OPTIONS[:argument]}")
   end
 end
 

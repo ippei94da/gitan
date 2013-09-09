@@ -2,14 +2,7 @@ gem "test-unit"
 require "test/unit"
 require "gitan"
 
-
-#class GritRepoDummy
-#  attr_accessor :status
-#  def initialize(status)
-#    @status = status
-#  end
-#end
-#
+#class GritRepoDummy #  attr_accessor :status #  def initialize(status) #    @status = status #  end #end #
 #class GritRepoStatusDummy
 #  attr_accessor :changed
 #  attr_accessor :added

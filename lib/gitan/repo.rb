@@ -3,7 +3,14 @@ class Gitan::Repo
   attr_reader :path
 
   def self.show_abbreviation(io = $stdout)
-    io.puts "==== B: multiple branches, S: to be staged, C: to be commited, P: to be pushed, L: to be pulled."
+    #io.puts "==== B: multiple branches, S: to be staged, C: to be commited, P: to be pushed, L: to be pulled."
+    io.puts "Abbreviations:"
+    io.puts "  B: multiple branches"
+    io.puts "  S: to be staged"
+    io.puts "  C: to be commited"
+    io.puts "  P: to be pushed"
+    io.puts "  L: to be pulled."
+    io.puts "========================================"
   end
 
   def initialize(path, remote_head = false)
