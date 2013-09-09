@@ -1,19 +1,18 @@
 #! /usr/bin/env ruby
 # coding: utf-8
 
+#gitan status
+# Show status of every git working trees.
+# Confirm the command 'git rev-parse FETCH_HEAD' show a hash value.
+# If not, you should execute 'git pull'
+#
+#gitan heads
+# Show hash value of every git repository.
+
 require "optparse"
+require "yaml"
 require "pp"
 require "gitan"
-
-## option analysis
-OPTIONS = {}
-#OPTIONS = {}
-#op = OptionParser.new
-#op.on("-a", "--all", "execute all working tree"){
-#  OPTIONS[:all] = true
-#}
-#op.on("-o str", "--argument=str", "descriptionB"){|v| OPTIONS[:bak] = v}
-#op.parse!(ARGV)
 
 def show_usage
   puts <<-HERE
@@ -23,25 +22,35 @@ USAGE
   gitan commit [path] [-a arguments]"
   gitan pull [path] [-a arguments] [-r remote_repo]"
   gitan push [path] [-a arguments]"
-  E.g.,
-  gitan pull ~/git -r example.com:/home/git -a "origin master"
-  default value of 'path' is ~/git.
+
+  Default value of 'path' is ~/git.
+
+  Examples:
+    gitan pull ~/git -r example.com:/home/git -a "origin master"
+    gitan commit --argument='-am "daily change"'
+
   HERE
 end
 
-def status
-  op = OptionParser.new
-  op.on("-r repo", "--remote=repo", "With remote info."){ |repo|
+def add_remote_option
+  OPTION_PARSER.on("-r repo", "--remote=repo", "with remote info"){ |repo|
     server, path = repo.split(":")
     OPTIONS[:remote] = Gitan.remote_heads(server, path)
   }
-  op.parse!(ARGV)
+end
 
-  if ARGV.empty?
-    git_dir = ENV["HOME"] + "/git"
-  else
-    git_dir = File::expand_path(ARGV[0])
-  end
+def add_argument_option
+  OPTION_PARSER.on("-a str", "--arguments=str", "supply argument to command"){ |str|
+    OPTIONS[:argument] = str
+  }
+end
+
+def status
+  add_remote_option
+  OPTION_PARSER.parse!(ARGV)
+
+  git_dir = ENV["HOME"] + "/git"
+  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
 
   Gitan::Repo.show_abbreviation($stdout)
   Dir.glob(git_dir + "/*").sort.map do |path|
@@ -52,11 +61,55 @@ def status
   end
 end
 
+def heads
+  git_dir = ENV["HOME"] + "/git"
+  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
+
+  results = {}
+  Dir.glob(git_dir + "/*").sort.map do |path|
+    next unless File.directory? path
+    repo = Gitan::Repo.new(path)
+    results[path] = repo.head
+  end
+
+  YAML.dump(results, $stdout)
+end
+
+def commit
+  add_argument_option
+  OPTION_PARSER.parse!(ARGV)
+
+  git_dir = ENV["HOME"] + "/git"
+  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
+
+  Dir.glob(git_dir + "/*").sort.map do |path|
+    next unless File.directory? path
+    repo = Gitan::Repo.new(path, nil)
+    if repo.to_be_commited?
+      print "#{path}: "
+      Dir.chdir path
+      command = "git commit #{OPTIONS[:argument]}"
+      puts command
+      #puts "system " + command unless OPTIONS[:debug]
+      system command unless OPTIONS[:debug]
+    end
+  end
+end
+
+
+##main
+OPTIONS = {}
+OPTION_PARSER = OptionParser.new
+OPTION_PARSER.on("-d", "--debug", "debug mode."){OPTIONS[:debug] = true}
 command = ARGV.shift
 
 case command
 when "status"
   status
+when "heads"
+  heads
+when "commit"
+  commit
 when "--help"
   show_usage
 else
