@@ -1,6 +1,8 @@
 = Gitan changelog
 
-== Master for 0.0.2
+== Master for 0.0.3
+
+== Version 0.0.2
 * Bugfix of to_be_pushed; to be false just after git pull.
 * add bin/gitan
 * add gitan subcommand, gitan status, alternatively to bin/gitanstatus
