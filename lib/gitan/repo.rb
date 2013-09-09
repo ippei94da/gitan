@@ -51,13 +51,18 @@ class Gitan::Repo
 
   #Return true if working tree has untracked changes.
   def to_be_staged?
-    lines = command_output_lines("git status -s")
-    return lines.select {|line| line =~ /^\?\?/} != []
+    lines = command_output_lines("git status --porcelain")
+    result = false
+    lines.each do |line|
+      result = true if line =~ /^\?\? /
+      result = true if line =~ /^ . /
+    end
+    return result
   end
 
   #Return true if working tree has changes on stage index.
   def to_be_commited?
-    lines = command_output_lines("git status -s")
+    lines = command_output_lines("git status --porcelain")
     return lines.select {|line| line =~ /^[^\?]/} != []
   end
 

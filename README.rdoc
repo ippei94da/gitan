@@ -1,6 +1,23 @@
 = gitan
 
-Description goes here.
+This gem provides some commands to manage multiple git repositories.
+'gitan status' shows status of every git repository.
+  - multiple branch?
+  - changes to be staged?
+  - changes to be commited?
+  - changes to be pushed?
+  - updates on remote repository? (when --remote option is used)
+
+'gitan commit' commits on all git repositories that has changes to be commited.
+'gitan push' pushes on all git repositories that has changes to be pushed.
+'gitan pull' pulles on all git repositories that has updates on remote repository.
+The repositories that have no changes are ignored.
+
+== Installation
+If you want to use --remote options, install gitan at remote host and enable to execute 'gitan heads'.
+
+== Usage
+Execute 'gitan --help'.
 
 == Contributing to gitan
  

@@ -37,7 +37,7 @@ class TestRepo < Test::Unit::TestCase
   def setup
     outputs = {
       "git branch" => ["* master"],
-      "git status -s" => [],
+      "git status --porcelain" => [],
       "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse --remotes" => [
@@ -50,7 +50,7 @@ class TestRepo < Test::Unit::TestCase
 
     outputs = {
       "git branch" => ["* master", "  tmp"],
-      "git status -s" => [
+      "git status --porcelain" => [
         " M Gemfile",
         "AM bin/gitanstatus",
         "?? test/gitan/",
@@ -67,7 +67,7 @@ class TestRepo < Test::Unit::TestCase
 
     outputs = {
       "git branch" => ["* master", "  tmp"],
-      "git status -s" => [
+      "git status --porcelain" => [
         "?? test/gitan/",
       ],
       "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
@@ -82,7 +82,7 @@ class TestRepo < Test::Unit::TestCase
 
     outputs = {
       "git branch" => ["* master"],
-      "git status -s" => [],
+      "git status --porcelain" => [],
       "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse --remotes" => [
@@ -94,7 +94,7 @@ class TestRepo < Test::Unit::TestCase
 
     outputs = {
       "git branch" => ["* master"],
-      "git status -s" => [],
+      "git status --porcelain" => [],
       "git rev-parse HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse FETCH_HEAD" => ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
       "git rev-parse --remotes" => [
@@ -115,7 +115,7 @@ class TestRepo < Test::Unit::TestCase
 
     outputs = {
       "git branch" => ["* master", "  tmp"],
-      "git status -s" => [
+      "git status --porcelain" => [
         " M Gemfile",
         "AM bin/gitanstatus",
         "?? test/gitan/",
@@ -136,28 +136,38 @@ class TestRepo < Test::Unit::TestCase
     assert_equal(false, @r00.to_be_staged?)
     assert_equal(true , @r01.to_be_staged?)
 
-    @r00.outputs["git status -s"] = [
-        "?? test/gitan/",
-    ]
+    @r00.outputs["git status --porcelain"] = [ "?? test/gitan/", ]
     assert_equal(true , @r00.to_be_staged?)
 
-    @r00.outputs["git status -s"] = [
+    @r00.outputs["git status --porcelain"] = [ " M Gemfile", ]
+    assert_equal(true , @r00.to_be_staged?)
+
+    @r00.outputs["git status --porcelain"] = [ "M  Gemfile", ]
+    assert_equal(false, @r00.to_be_staged?)
+
+    @r00.outputs["git status --porcelain"] = [
       " M Gemfile",
       "AM bin/gitanstatus",
     ]
-    assert_equal(false, @r00.to_be_staged?)
+    assert_equal(true , @r00.to_be_staged?)
+
+    @r00.outputs["git status --porcelain"] = [
+      "?? Gemfile",
+      "A  bin/gitanstatus",
+    ]
+    assert_equal(true , @r00.to_be_staged?)
   end
 
   def test_to_be_commited?
     assert_equal(false, @r00.to_be_commited?)
     assert_equal(true , @r01.to_be_commited?)
 
-    @r00.outputs["git status -s"] = [
+    @r00.outputs["git status --porcelain"] = [
         "?? test/gitan/",
     ]
     assert_equal(false, @r00.to_be_commited?)
 
-    @r00.outputs["git status -s"] = [
+    @r00.outputs["git status --porcelain"] = [
       " M Gemfile",
       "AM bin/gitanstatus",
     ]
