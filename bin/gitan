@@ -1,19 +1,22 @@
 #! /usr/bin/env ruby
 # coding: utf-8
 
+#gitan heads
+# Show hash value of every git repository.
+#
 #gitan status
 # Show status of every git working trees.
 # Confirm the command 'git rev-parse FETCH_HEAD' show a hash value.
 # If not, you should execute 'git pull'
-#
-#gitan heads
-# Show hash value of every git repository.
 #
 #gitan commit
 # Commit every working tree that has changes to be be commited.
 #
 #gitan push
 # Commit every working tree that has changes to be pushed.
+#
+#gitan pull
+# Pull every working tree that has update on remote.
 
 require "optparse"
 require "yaml"
@@ -127,7 +130,24 @@ def push
 end
 
 def pull
-  TODO
+  add_remote_option
+  add_argument_option
+  OPTION_PARSER.parse!(ARGV)
+  git_dir = ENV["HOME"] + "/git"
+  git_dir = File::expand_path(ARGV[0]) if ARGV[0]
+
+  Dir.glob(git_dir + "/*").sort.map do |path|
+    next unless File.directory? path
+    head = OPTIONS[:remote][File.basename(path)] if OPTIONS[:remote]
+    repo = Gitan::Repo.new(path, head)
+    if repo.to_be_pulled?
+      print "#{path}: "
+      Dir.chdir path
+      command = "git pull #{OPTIONS[:argument]}"
+      puts command
+      system command unless OPTIONS[:debug]
+    end
+  end
 end
 
 ##main
