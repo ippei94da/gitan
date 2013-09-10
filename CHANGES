@@ -1,6 +1,8 @@
 = Gitan changelog
 
-== Master for 0.0.2
+== Master for 0.0.3
+
+== Version 0.0.2
 * bugfix of Gitan::Repo#to_be_pushed; to be false just after git pull.
 * bugfix of Gitan::REpo#to_be_staged.
 * add bin/gitan
