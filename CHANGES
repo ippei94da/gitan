@@ -1,6 +1,7 @@
 = Gitan changelog
 
 == Master for 0.0.3
+* small revision on usage.
 
 == Version 0.0.2
 * bugfix of Gitan::Repo#to_be_pushed; to be false just after git pull.

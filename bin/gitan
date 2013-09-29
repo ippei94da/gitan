@@ -27,11 +27,11 @@ require "gitan"
 def show_usage
   puts <<-HERE
 USAGE
-  gitan heads  [path]"
-  gitan status [path] [-r remote_dir]"
-  gitan commit [path] [-a arguments]"
-  gitan push   [path] [-a arguments]"
-  gitan pull   [path] [-a arguments] [-r remote_dir]"
+  gitan heads  [path]
+  gitan status [path] [-r remote_dir]
+  gitan commit [path] [-a arguments]
+  gitan push   [path] [-a arguments]
+  gitan pull   [path] [-a arguments] [-r remote_dir]
 
   Default value of 'path' is ~/git.
 
