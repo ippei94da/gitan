@@ -28,16 +28,16 @@ def show_usage
   puts <<-HERE
 USAGE
   gitan heads  [path]
-  gitan status [path] [-r remote_dir]
-  gitan commit [path] [-a arguments]
-  gitan push   [path] [-a arguments]
-  gitan pull   [path] [-a arguments] [-r remote_dir]
+  gitan status [path] [--argument=str] [-r remote_dir]
+  gitan commit [path] [--argument=str]
+  gitan push   [path] [--argument=str]
+  gitan pull   [path] [--argument=str] [-r remote_dir]
 
   Default value of 'path' is ~/git.
 
   Examples:
     gitan heads /home/git
-    gitan status -r example.com:/home/git
+    gitan status -r example.com:/home/git --argument="-s"
     gitan commit --argument='-am "commit message"'
     gitan push -a "origin master"
     gitan pull ~/git -r example.com:/home/git -a "origin master"
@@ -82,7 +82,8 @@ end
 
 def status
   add_remote_option
-  OPTION_PARSER.on("-a", "--all", "show all repositories."){ OPTIONS[:all] = true}
+  add_argument_option
+  OPTION_PARSER.on("-A", "--all", "show all repositories."){ OPTIONS[:all] = true}
   OPTION_PARSER.on("-e", "--explain", "show explanation for abbreviation."){ OPTIONS[:explain] = true}
   OPTION_PARSER.parse!(ARGV)
 
@@ -102,6 +103,10 @@ def status
   Gitan::Repo.show_abbreviation if OPTIONS[:explain]
   repos.each do |repo|
     puts repo.short_status
+    #pp OPTION
+    if OPTIONS[:argument]
+      execute(repo.path, "git status #{OPTIONS[:argument]}")
+    end
   end
 end
 

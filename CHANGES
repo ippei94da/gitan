@@ -2,6 +2,8 @@
 
 == Master for 0.0.3
 * small revision on usage.
+* gitan status -a option changed to be -A.
+* gitan status is added an option of --argument.
 
 == Version 0.0.2
 * bugfix of Gitan::Repo#to_be_pushed; to be false just after git pull.
